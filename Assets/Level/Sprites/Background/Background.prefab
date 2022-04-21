@@ -45,7 +45,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 25
-      m_TileSpriteIndex: 31
+      m_TileSpriteIndex: 4294967295
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -340,7 +340,7 @@ Tilemap:
     m_Data: {fileID: 21300022, guid: 039156ef17ead2049972aa72b6a9df45, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 21300020, guid: 039156ef17ead2049972aa72b6a9df45, type: 3}
-  - m_RefCount: 2
+  - m_RefCount: 1
     m_Data: {fileID: 21300016, guid: 039156ef17ead2049972aa72b6a9df45, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: 039156ef17ead2049972aa72b6a9df45, type: 3}
@@ -510,7 +510,7 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
---- !u!114 &2711521519136658959
+--- !u!114 &1643888837222532458
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
