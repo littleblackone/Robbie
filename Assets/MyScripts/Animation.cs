@@ -13,9 +13,9 @@ public class Animation : MonoBehaviour
     int fallID;
     Rigidbody2D rb;
     void Start()
-    {
+    {    
         move = GetComponentInParent<PlayerMove>();
-        rb = GetComponent<Rigidbody2D>();
+        rb = PlayerMove.FindObjectOfType<Rigidbody2D>();
         animator = GetComponent<Animator>();
         speedID = Animator.StringToHash("speed");
         isHangingID = Animator.StringToHash("isHanging");
@@ -26,12 +26,12 @@ public class Animation : MonoBehaviour
 
 
     void Update()
-    {
+    {   
         animator.SetFloat(speedID,Mathf.Abs(move.xVelocity));
         animator.SetBool(isOnGroundID, move.isTouchLayer);
         animator.SetBool(isHangingID, move.isHanging);
         animator.SetBool(isCrouchingID, move.isCrouch);
-        animator.SetFloat(fallID, rb.velocity.y);
+        animator.SetFloat(fallID,rb.velocity.y);
     }
     public void StepAudio()
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-    Rigidbody2D rb;
+    public Rigidbody2D rb;
     BoxCollider2D box;
 
     [Header("移动参数")]
@@ -24,6 +24,7 @@ public class PlayerMove : MonoBehaviour
     public bool isJumping = false;//是否正在跳跃
     public bool isheadBlock = false;//头顶是否被挡住
     public bool isHanging = false;//是否悬挂
+    public bool isRelieve = false;//是否解除悬挂
 
     //杂项
     public float xVelocity;//接受来自键盘的水平力的方向  
@@ -42,6 +43,8 @@ public class PlayerMove : MonoBehaviour
     public float grabDistance = 0.4f;//悬挂的距离
     public float reachOffset = 0.7f;//判断下面有没有墙壁的射线距角色的距离
     public float playHeight = 0.05f;//角色高度
+
+    float Boxhigh;
 
 
     //碰撞器大小和位置
@@ -62,7 +65,6 @@ public class PlayerMove : MonoBehaviour
         box = GetComponent<BoxCollider2D>();
         Standoffset = box.offset;
         Standsize = box.size;
-        playHeight += box.size.y;
         Crouchsize = new Vector2(Standsize.x, Standsize.y / 2);
         Crouchoffset = new Vector2(Standoffset.x, Standoffset.y / 2);
     }
@@ -92,13 +94,15 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetButtonDown("Crouch"))
         {
             CrouchPress = true;
-        }     
+        }
+        Boxhigh = box.size.y;
     }
     private void FixedUpdate()//FixedUpdate里写与刚体相关的需要连续物理呈现的代码，如移动。经过实验，跳跃相关的代码放在FixedUpdate里跳跃才会流畅。
     {
         RayCheck();
         GroundMovement();
         AccumulatorJump();
+        HangingRelieve();
     }
     void GroundMovement()//水平移动
     {    
@@ -123,9 +127,9 @@ public class PlayerMove : MonoBehaviour
     void PlayerFacing()//玩家朝向
     {
         if (xVelocity < 0)
-            transform.localScale = new Vector2(-1, 1);
+            transform.localScale = new Vector3(-1, 1, 1);
         else if (xVelocity > 0)
-            transform.localScale = new Vector2(1, 1);
+            transform.localScale = new Vector3(1, 1, 1);
     }
     void Crouch()//蹲下
     {
@@ -143,7 +147,7 @@ public class PlayerMove : MonoBehaviour
     }     
    void AccumulatorJump()//跳跃代码总结：跳跃代码写在FixedUpdate里，在Update获得按键参数，用if和bool判断是否按下了按键，再将值传送到FixedUpdate里，这样跳跃才能流畅不受帧数影响
    {
-        if (isTouchLayer && isJumpPress && !isheadBlock&&!isHanging)//防止头有墙的时候可以跳
+        if (isTouchLayer && isJumpPress && !isheadBlock)//防止头有墙的时候可以跳
         {
             if (isCrouch)
             {
@@ -179,40 +183,24 @@ public class PlayerMove : MonoBehaviour
         return hit;
     }
     void RayCheck()//利用射线判断物理情况（射线起点以外的部分碰到碰撞体条件才成立）
-    {
-        //悬挂射线
-        if (isHanging)
-        {
-            if (isJumpPress)
-            {
-                rb.bodyType = RigidbodyType2D.Dynamic;            
-                rb.AddForce(Vector2.up * HangingJumpForce, ForceMode2D.Impulse);                                 
-                isHanging = false;             
-            }         
-            if (CrouchPress)
-            {
-                CrouchPress = false;
-                rb.bodyType = RigidbodyType2D.Dynamic;
-                isHanging = false;
-            }
-        }
+    {  
         float dirction = transform.localScale.x;
         Vector2 grabDir = new Vector2(dirction, 0);
-        RaycastHit2D headCheck = raycast(new Vector2(footOffset * dirction, playHeight), grabDir, grabDistance, Ground);//头顶射线 判断上面是否有墙
+        RaycastHit2D headCheck = raycast(new Vector2(footOffset * dirction, playHeight+Boxhigh), grabDir, grabDistance, Ground);//头顶射线 判断上面是否有墙
         RaycastHit2D wallCheck = raycast(new Vector2(footOffset * dirction, eyesHight), grabDir, grabDistance, Ground);//眼睛射线 判断前方是否有墙
-        RaycastHit2D reachCheck = raycast(new Vector2(reachOffset * dirction, playHeight), Vector2.down, grabDistance, Ground);//从头上往下画一条射线判断下方是否有墙
-        if (!isTouchLayer && rb.velocity.y <= 0 && !headCheck && wallCheck && reachCheck)
+        RaycastHit2D reachCheck = raycast(new Vector2(reachOffset * dirction, playHeight+Boxhigh), Vector2.down, grabDistance, Ground);//从头上往下画一条射线判断下方是否有墙
+        if (!isRelieve&& !isTouchLayer && rb.velocity.y <= 0 && !headCheck && wallCheck && reachCheck)
         {
             Vector3 pos = transform.position;
             pos.x += (wallCheck.distance-0.08f) * dirction;
             pos.y = pos.y - reachCheck.distance ;
             transform.position = pos;
             isHanging = true;
+            isRelieve = false;
             rb.bodyType = RigidbodyType2D.Static;
         }
-        
-      //左右脚射线
-      RaycastHit2D leftfoot = raycast(new Vector2(-footOffset,0),Vector2.down,footBlock,Ground);
+        //左右脚射线
+        RaycastHit2D leftfoot = raycast(new Vector2(-footOffset,0),Vector2.down,footBlock,Ground);
         RaycastHit2D rightfoot = raycast(new Vector2(footOffset, 0), Vector2.down, footBlock, Ground);
         if (leftfoot || rightfoot)
         {
@@ -228,5 +216,26 @@ public class PlayerMove : MonoBehaviour
         }
         else
             isheadBlock = false;
+    }
+    void HangingRelieve()//悬挂解除
+    {
+        //悬挂射线
+        if (isHanging)
+        {
+            if (isJumpPress)
+            {
+                rb.bodyType = RigidbodyType2D.Dynamic;
+                rb.AddForce(Vector2.up * HangingJumpForce, ForceMode2D.Impulse);
+                isRelieve = true;
+                isHanging = false;
+            }
+            if (CrouchPress)
+            {
+                CrouchPress = false;
+                rb.bodyType = RigidbodyType2D.Dynamic;
+                isRelieve = true;
+                isHanging = false;
+            }
+        }
     }
 }
