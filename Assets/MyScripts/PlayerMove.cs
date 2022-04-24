@@ -26,7 +26,7 @@ public class PlayerMove : MonoBehaviour
     public bool isHanging = false;//是否悬挂
 
     //杂项
-    float xVelocity;//接受来自键盘的水平力的方向  
+    public float xVelocity;//接受来自键盘的水平力的方向  
     float Jumptime;//现实时间加蓄力跳时间
 
     [Header("图层名称")]
