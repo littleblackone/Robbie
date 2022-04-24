@@ -14,7 +14,6 @@ public class PlayerMove : MonoBehaviour
     public float HangingJumpForce = 10;//悬挂跳跃力度
     public float CrouchSpeedDivisor = 3;//蹲下时速度减慢，速度的除数
     public float JumpDuration = 0.1f;//蓄力跳持续时间                                    
-    
     public float CrouchJumpForce = 2;//蹲下跳跃增加力度                      
       
     [Header("状态判断")]
@@ -24,7 +23,7 @@ public class PlayerMove : MonoBehaviour
     public bool isJumping = false;//是否正在跳跃
     public bool isheadBlock = false;//头顶是否被挡住
     public bool isHanging = false;//是否悬挂
-    public bool isRelieve = false;//是否解除悬挂
+    public bool isRelieve = false;//是否解除悬挂。--------- 遇到杂难疑证，多用bool判断---------------
 
     //杂项
     public float xVelocity;//接受来自键盘的水平力的方向  
@@ -43,9 +42,7 @@ public class PlayerMove : MonoBehaviour
     public float grabDistance = 0.4f;//悬挂的距离
     public float reachOffset = 0.7f;//判断下面有没有墙壁的射线距角色的距离
     public float playHeight = 0.05f;//角色高度
-
-    float Boxhigh;
-
+    float boxHeight;
 
     //碰撞器大小和位置
     Vector2 Standoffset;
@@ -56,13 +53,14 @@ public class PlayerMove : MonoBehaviour
     //按键参数
     bool isJumpHold = false;
     bool isJumpPress = false;
-    bool CrouchHold = false;
-    bool CrouchPress = false;
+    public  bool CrouchHold = false;
+ public    bool CrouchPress = false;
 
     void Awake()                
     {
         rb = GetComponent<Rigidbody2D>();
         box = GetComponent<BoxCollider2D>();
+        boxHeight = box.size.y;
         Standoffset = box.offset;
         Standsize = box.size;
         Crouchsize = new Vector2(Standsize.x, Standsize.y / 2);
@@ -95,7 +93,10 @@ public class PlayerMove : MonoBehaviour
         {
             CrouchPress = true;
         }
-        Boxhigh = box.size.y;
+        if (Input.GetButtonUp("Crouch"))//解决最后问题，没想到加个GetButtonUp就行了，这样就跟CrouchHold的true和false是一样的了，总的来说，挺爽的，很有成就感。
+        {
+            CrouchPress = false;
+        }
     }
     private void FixedUpdate()//FixedUpdate里写与刚体相关的需要连续物理呈现的代码，如移动。经过实验，跳跃相关的代码放在FixedUpdate里跳跃才会流畅。
     {
@@ -151,7 +152,7 @@ public class PlayerMove : MonoBehaviour
         {
             if (isCrouch)
             {
-                Stand();               
+                Stand();                 
                 rb.AddForce(Vector2.up * CrouchJumpForce, ForceMode2D.Impulse);
             }
 
@@ -186,9 +187,9 @@ public class PlayerMove : MonoBehaviour
     {  
         float dirction = transform.localScale.x;
         Vector2 grabDir = new Vector2(dirction, 0);
-        RaycastHit2D headCheck = raycast(new Vector2(footOffset * dirction, playHeight+Boxhigh), grabDir, grabDistance, Ground);//头顶射线 判断上面是否有墙
+        RaycastHit2D headCheck = raycast(new Vector2(footOffset * dirction, playHeight+boxHeight), grabDir, grabDistance, Ground);//头顶射线 判断上面是否有墙
         RaycastHit2D wallCheck = raycast(new Vector2(footOffset * dirction, eyesHight), grabDir, grabDistance, Ground);//眼睛射线 判断前方是否有墙
-        RaycastHit2D reachCheck = raycast(new Vector2(reachOffset * dirction, playHeight+Boxhigh), Vector2.down, grabDistance, Ground);//从头上往下画一条射线判断下方是否有墙
+        RaycastHit2D reachCheck = raycast(new Vector2(reachOffset * dirction, playHeight+boxHeight), Vector2.down, grabDistance, Ground);//从头上往下画一条射线判断下方是否有墙
         if (!isRelieve&& !isTouchLayer && rb.velocity.y <= 0 && !headCheck && wallCheck && reachCheck)
         {
             Vector3 pos = transform.position;
@@ -196,7 +197,7 @@ public class PlayerMove : MonoBehaviour
             pos.y = pos.y - reachCheck.distance ;
             transform.position = pos;
             isHanging = true;
-            isRelieve = false;
+            isRelieve = true;
             rb.bodyType = RigidbodyType2D.Static;
         }
         //左右脚射线
@@ -225,15 +226,15 @@ public class PlayerMove : MonoBehaviour
             if (isJumpPress)
             {
                 rb.bodyType = RigidbodyType2D.Dynamic;
-                rb.AddForce(Vector2.up * HangingJumpForce, ForceMode2D.Impulse);
-                isRelieve = true;
-                isHanging = false;
+                rb.velocity = new Vector3(HangingJumpForce*-0.8f, HangingJumpForce);
+                isRelieve = false ;
+                isHanging = false ;
             }
-            if (CrouchPress)
+            if (CrouchPress)//终于找到问题所在，遇到问题不要急，冷静下来思考关键点，多做实验，在代码中逐一注释来验证错误点。
             {
                 CrouchPress = false;
                 rb.bodyType = RigidbodyType2D.Dynamic;
-                isRelieve = true;
+                isRelieve = false;
                 isHanging = false;
             }
         }
