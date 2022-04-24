@@ -53,8 +53,8 @@ public class PlayerMove : MonoBehaviour
     //按键参数
     bool isJumpHold = false;
     bool isJumpPress = false;
-    public  bool CrouchHold = false;
- public    bool CrouchPress = false;
+    bool CrouchHold = false;//有时候可以把bool都public，在游戏中看条件变化，就能找到问题所在。
+    bool CrouchPress = false;
 
     void Awake()                
     {
