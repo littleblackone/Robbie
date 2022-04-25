@@ -84,6 +84,10 @@ public class PlayerMove : MonoBehaviour
         {
             isJumpPress = true;
         }
+        if (Input.GetButtonUp("Jump"))//GetButtonDown和GetButtonUp尽量同时存在进行判断
+        {
+            isJumpPress = false;
+        }
         if (Input.GetButton("Jump"))
         {
             isJumpHold = true;
@@ -155,7 +159,8 @@ public class PlayerMove : MonoBehaviour
                 Stand();                 
                 rb.AddForce(Vector2.up * CrouchJumpForce, ForceMode2D.Impulse);
             }
-
+            AudioManager.PlayjumpAudio();
+            
             isJumping = true;
             isJumpPress = false;
             rb.AddForce(Vector2.up * JumpForce, ForceMode2D.Impulse);
@@ -226,7 +231,7 @@ public class PlayerMove : MonoBehaviour
             if (isJumpPress)
             {
                 rb.bodyType = RigidbodyType2D.Dynamic;
-                rb.velocity = new Vector3(HangingJumpForce*-0.8f, HangingJumpForce);
+                rb.AddForce(Vector2.up * HangingJumpForce, ForceMode2D.Impulse);
                 isRelieve = false ;
                 isHanging = false ;
             }

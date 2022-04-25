@@ -35,11 +35,11 @@ public class Animation : MonoBehaviour
     }
     public void StepAudio()
     {
-
+        AudioManager.PlaystepAudio();
     }
 
     public void CrouchStepAudio()
     {
-
+        AudioManager.PlayCrouchstepAudio();
     }
 }
