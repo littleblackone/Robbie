@@ -16,12 +16,19 @@ public class AudioManager : MonoBehaviour
     public AudioClip[] CrouchstepAudio;//蹲下走路的声音，同样有4个
     public AudioClip JumpAudio;//跳跃的声音
     public AudioClip JumpyellAudio;//跳跃时人物的声音
+    public AudioClip deathAudio;//死亡声音
+    public AudioClip deathAudiovoice;//死亡叫声
+    public AudioClip orbAudiovoice;//收集到宝珠的叫声
 
-    AudioSource Ambient;
-    AudioSource Bk;
-    AudioSource Fx;
-    AudioSource Player;
-    AudioSource Playervoice;
+    [Header("FX音效")]
+    public AudioClip deathFx;//归还宝珠声音
+    public AudioClip orbFx;//收集到宝珠的声音
+
+    AudioSource Ambient;//环境声
+    AudioSource Bk;//背景声
+    AudioSource Fx;//特效声
+    AudioSource Player;//人物脚本声
+    AudioSource Playervoice;//人物叫声
      void Awake()
     {
         manager = this;
@@ -65,5 +72,23 @@ public class AudioManager : MonoBehaviour
         manager.Playervoice.clip = manager.JumpyellAudio;
         manager.Playervoice.Play();
     }
-  
+  public static void PlaydeathAudio()
+    {
+        manager.Player.clip = manager.deathAudio;
+        manager.Player.Play();
+
+        manager.Player.clip  = manager.deathAudiovoice;
+        manager.Player.Play();
+
+        manager.Fx.clip = manager.deathFx;
+        manager.Fx.Play();
+    }
+    public static void PlayorbAudio()
+    {
+        manager.Fx.clip = manager.orbFx;
+        manager.Fx.Play();
+
+        manager.Playervoice.clip = manager.orbAudiovoice;
+        manager.Playervoice.Play();
+    }
 }
