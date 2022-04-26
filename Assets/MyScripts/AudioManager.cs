@@ -31,6 +31,11 @@ public class AudioManager : MonoBehaviour
     AudioSource Playervoice;//人物叫声
      void Awake()
     {
+        if (manager!=null)
+        {
+            Destroy(gameObject);
+            return;//return不能掉
+        }
         manager = this;
         DontDestroyOnLoad(gameObject);
         Ambient = gameObject.AddComponent<AudioSource>();
