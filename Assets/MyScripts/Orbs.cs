@@ -10,6 +10,7 @@ public class Orbs : MonoBehaviour
     void Start()
     {
         player = LayerMask.NameToLayer("Player");
+        GameManager.RegisterOrbs(this);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -18,6 +19,7 @@ public class Orbs : MonoBehaviour
             gameObject.SetActive(false);
             Instantiate(orbFx, transform.position, transform.rotation);
             AudioManager.PlayorbAudio();
+            GameManager.Orbseat(this);
         }
     }
 

@@ -20,7 +20,7 @@ public class PlayerDeath : MonoBehaviour
             Instantiate(deathFx, transform.position, transform.rotation);
             gameObject.SetActive(false);
             AudioManager.PlaydeathAudio();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            GameManager.Deathload();
         }
     }
     

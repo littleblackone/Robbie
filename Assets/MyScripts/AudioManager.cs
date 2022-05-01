@@ -27,13 +27,12 @@ public class AudioManager : MonoBehaviour
     AudioSource Ambient;//环境声
     AudioSource Bk;//背景声
     AudioSource Fx;//特效声
-    AudioSource Player;//人物脚本声
+    AudioSource Player;//人物脚步声
     AudioSource Playervoice;//人物叫声
      void Awake()
     {
         if (manager!=null)
-        {
-            Destroy(gameObject);
+        {        
             return;//return不能掉
         }
         manager = this;

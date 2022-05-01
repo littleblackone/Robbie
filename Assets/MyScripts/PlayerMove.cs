@@ -34,8 +34,8 @@ public class PlayerMove : MonoBehaviour
 
     [Header("射线判断")]
     public float footOffset = 0.45f;//双脚的位置
-    public float headBlock = 0.2f;//头顶射线碰撞的距离
-    public float footBlock = 0.2f;//双脚射线碰撞的距离
+    public float headBlock = 0.1f;//头顶射线碰撞的距离
+    public float footBlock = 0.1f;//双脚射线碰撞的距离
 
     [Header("悬挂参数")]
     public float eyesHight = 1.55f;//眼睛的高度
