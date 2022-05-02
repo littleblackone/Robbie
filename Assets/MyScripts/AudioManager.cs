@@ -23,6 +23,7 @@ public class AudioManager : MonoBehaviour
     [Header("FX音效")]
     public AudioClip deathFx;//归还宝珠声音
     public AudioClip orbFx;//收集到宝珠的声音
+    public AudioClip doorFx;//门打开的声音
 
     AudioSource Ambient;//环境声
     AudioSource Bk;//背景声
@@ -66,6 +67,11 @@ public class AudioManager : MonoBehaviour
         int index2 = Random.Range(0, manager.CrouchstepAudio.Length);
         manager.Player.clip = manager.CrouchstepAudio[index2];
         manager.Player.Play();
+    }
+    public static void PlayDooropenAudio()
+    {
+        manager.Fx.clip = manager.doorFx;
+        manager.Fx.Play();
     }
 
     public static void PlayjumpAudio()

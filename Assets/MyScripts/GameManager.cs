@@ -7,9 +7,11 @@ public class GameManager : MonoBehaviour
 {
     static GameManager instance;
     SceneFader fader;
+    Door door;
     List<Orbs> orb;
-    public int orbNum;
-    public int deathNum;
+    int deathNum;
+    float time;
+    bool gameover;
     private void Awake()
     {
         if (instance!=null)
@@ -20,21 +22,26 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this);
         orb = new List<Orbs>();
     }
-    private void Update()
-    {
-        orbNum = instance.orb.Count;
-    }
+  
     public static void Orbseat(Orbs obj)
     {
-        if (instance.orb!=null)
-        {
-            instance.orb.Remove(obj);
-        }
+        if (!instance.orb.Contains(obj))
+            return;
+        instance.orb.Remove(obj);
         
+        if (instance.orb.Count==0)
+        {
+            instance.door.DoorOpen();          
+        }
+        UIManager.OrbUi(instance.orb.Count);
     }
     public static void RegisterSceneFader(SceneFader obj)
     {
         instance.fader = obj;
+    }
+    public static void RegisterDoorOpen(Door obj)
+    {
+        instance.door = obj;
     }
     public static void RegisterOrbs(Orbs obj)
     {
@@ -42,11 +49,30 @@ public class GameManager : MonoBehaviour
         {
           instance.orb.Add(obj);
         }
-        
+        UIManager.OrbUi(instance.orb.Count);
     }
-     public static void Deathload()
+    private void Update()
+    {
+        if (gameover)
+        {
+            return;
+        }
+        time += Time.deltaTime;
+        UIManager.timeUi(time);
+    }
+    public static void gameoverUi()
+    {
+        instance.gameover = true;
+        UIManager.gameOverUi();
+    }
+    public static bool isgameover()
+    {
+        return instance.gameover;
+    }
+    public static void Deathload()
     {
         instance.deathNum++;
+        UIManager.deathUi(instance.deathNum);
         instance.fader.Playfader();
         instance.Invoke("Sceneload", 2.2f);
     }

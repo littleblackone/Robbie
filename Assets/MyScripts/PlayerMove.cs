@@ -74,7 +74,11 @@ public class PlayerMove : MonoBehaviour
 
 
     void Update()//Update里写需要实时渲染的代码和所有获取按键的代码，如Button，Key相关的代码
-    {     
+    {
+        if (GameManager.isgameover())
+        {
+            return;
+        }
         xVelocity = Input.GetAxis("Horizontal");
         if (!isHanging)
         {
@@ -104,6 +108,10 @@ public class PlayerMove : MonoBehaviour
     }
     private void FixedUpdate()//FixedUpdate里写与刚体相关的需要连续物理呈现的代码，如移动。经过实验，跳跃相关的代码放在FixedUpdate里跳跃才会流畅。
     {
+        if (GameManager.isgameover())
+        {
+            return;
+        }
         RayCheck();
         GroundMovement();
         AccumulatorJump();
