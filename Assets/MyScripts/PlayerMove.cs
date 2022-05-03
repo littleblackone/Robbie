@@ -110,6 +110,7 @@ public class PlayerMove : MonoBehaviour
     {
         if (GameManager.isgameover())
         {
+            rb.bodyType = RigidbodyType2D.Static;
             return;
         }
         RayCheck();

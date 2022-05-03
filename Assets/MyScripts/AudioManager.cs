@@ -45,7 +45,7 @@ public class AudioManager : MonoBehaviour
         Playervoice = gameObject.AddComponent<AudioSource>();
         PlayAmbientAudio();
     }
-
+ 
     void PlayAmbientAudio()
     {
         manager.Ambient.clip = manager.AmbientAudio;
@@ -58,9 +58,13 @@ public class AudioManager : MonoBehaviour
     }
     public static void PlaystepAudio()
     {
+        if (GameManager.isgameover())
+        {
+            manager.Player.enabled = false;
+        }
         int index1 = Random.Range(0, manager.WalkstepAudio.Length);
         manager.Player.clip = manager.WalkstepAudio[index1];
-        manager.Player.Play();   
+        manager.Player.Play();      
     }
     public static void PlayCrouchstepAudio()
     {
@@ -101,4 +105,5 @@ public class AudioManager : MonoBehaviour
         manager.Playervoice.clip = manager.orbAudiovoice;
         manager.Playervoice.Play();
     }
+   
 }

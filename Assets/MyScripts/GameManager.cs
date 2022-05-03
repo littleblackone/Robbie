@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     bool gameover;
     private void Awake()
     {
-        if (instance!=null)
+        if (instance!=null)//只要是管理器，类似gamemanager，audiomanager，就要写这个，不然场景生成一次就会多一个管理器。UImanager里还要加上destroy（gameobject）;来删除上次场景的UI。
         {         
             return;
         }
@@ -57,8 +57,11 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
-        time += Time.deltaTime;
-        UIManager.timeUi(time);
+        if (!gameover)
+        {
+        time += Time.deltaTime;     
+        }
+        UIManager.timeUi(time); 
     }
     public static void gameoverUi()
     {
@@ -78,7 +81,7 @@ public class GameManager : MonoBehaviour
     }
      void Sceneload()
     {
-        instance.orb.Clear();
+        instance.orb.Clear(); 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

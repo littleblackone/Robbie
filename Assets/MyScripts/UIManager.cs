@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     {
         if (uI!=null)
         {
+            Destroy(gameObject);
             return;
         }
         uI = this;
@@ -28,10 +29,10 @@ public class UIManager : MonoBehaviour
     {
         int minute = (int)(time / 60);
         int second = (int)(time % 60);
-        uI.timetext.text = minute.ToString("00") + ":" + second.ToString("00");
+        uI.timetext.text = minute.ToString("00") + ":" + second.ToString("00");           
     }
     public static void gameOverUi()
     {
-        
+        uI.gameovertext.enabled = true;
     }
 }
